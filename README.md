@@ -44,3 +44,33 @@ No build step or server is required! Simply open the project folder and run:
 
 1. Double-click or open `index.html` in any modern web browser.
 2. Click **Link File** to link to an `ai_accounts.json` file in your workspace directory (e.g., root) so the application auto-saves your changes directly to the filesystem.
+
+---
+
+## 🌐 Browser Compatibility & UI Behavior
+
+Depending on the browser you use, you will see a slightly different interface for managing files due to browser-specific security sandbox limits:
+
+### Chromium-based Browsers (Chrome, Edge, Opera)
+- **UI Element**: Shows **1 button** (`Link File` / `Saved ✓`).
+- **Technical Detail**: Supports the **File System Access API**. When you click "Link File" and select or create your `ai_accounts.json` file once, the browser maintains a reference to that file. The app reads and auto-saves updates directly to that local file in the background on every change without needing repeated prompts.
+
+### Non-Chromium Browsers (Firefox, Safari)
+- **UI Elements**: Shows **2 buttons** (`Save File` & `Load File`).
+- **Technical Detail**: These browsers do not support background file system linking. To keep your data synced:
+  1. Use **Save File** (Export) to manually generate and download a fresh copy of `ai_accounts.json` to your local machine.
+  2. Use **Load File** (Import) to select a saved `ai_accounts.json` file from your disk and load the data back into the app.
+
+---
+
+## 🔄 Recent Changes (Current Update Cycle)
+
+The following changes and optimizations have been made in this update cycle:
+
+- **Git Settings**: Added a `.gitignore` file to ensure the local storage file `ai_accounts.json` is ignored by Git, keeping local datasets private.
+- **Available-Since Timestamps**: Updated the "Ready to Use" UI cards to show the exact timestamp when the account became ready (`Became available: <date time>`).
+- **Text Readability Adjustments**:
+  - In **Dark Mode**, the availability status text is styled in crisp white (`#ffffff`) for sharp readability against the dark background.
+  - In **Light Mode**, the text uses a darker gray (`var(--text-secondary)`) to maintain clean contrast.
+- **Firefox Startup Delay Fix**: Implemented a **500ms timeout** on the IndexedDB initialization check in `app.js`. If Firefox blocks or hangs on local IndexedDB access (a known issue when running from local protocols like `file:///`), the app will bypass it and fall back to LocalStorage instantly, avoiding a frozen blank screen.
+- **Asynchronous Fonts**: Configured Google Fonts loading in `index.html` to be completely non-blocking, ensuring the app layout loads instantly using system fonts first.

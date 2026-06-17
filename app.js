@@ -113,10 +113,30 @@
   // IndexedDB — remember the file handle across sessions
   function openDB() {
     return new Promise((resolve, reject) => {
-      const req = indexedDB.open(DB_NAME, 1);
-      req.onupgradeneeded = e => e.target.result.createObjectStore(DB_STORE);
-      req.onsuccess  = e => resolve(e.target.result);
-      req.onerror    = e => reject(e.target.error);
+      const timeout = setTimeout(() => {
+        reject(new Error('IndexedDB open timeout'));
+      }, 500);
+
+      try {
+        if (!window.indexedDB) {
+          clearTimeout(timeout);
+          reject(new Error('IndexedDB not supported'));
+          return;
+        }
+        const req = indexedDB.open(DB_NAME, 1);
+        req.onupgradeneeded = e => e.target.result.createObjectStore(DB_STORE);
+        req.onsuccess  = e => {
+          clearTimeout(timeout);
+          resolve(e.target.result);
+        };
+        req.onerror    = e => {
+          clearTimeout(timeout);
+          reject(e.target.error || req.error);
+        };
+      } catch (err) {
+        clearTimeout(timeout);
+        reject(err);
+      }
     });
   }
 
@@ -375,6 +395,7 @@
           <div class="countdown-digits">
             <span class="ready-big">✓ Available Now</span>
           </div>
+          <div class="ready-at-text">Became available: ${formatDateTime(availableAt)}</div>
         </div>`;
     }
     if (state === 'idle') {

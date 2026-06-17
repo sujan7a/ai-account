@@ -605,8 +605,11 @@ html.light .stat-btn .theme-icon-dark { display: none; }
 /* Ready subtext */
 .ready-at-text {
   font-size: 0.68rem;
-  color: var(--text-muted);
+  color: #ffffff;
   margin-top: 8px;
+}
+html.light .ready-at-text {
+  color: var(--text-secondary);
 }
 
 /* Ready big text */
