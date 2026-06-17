@@ -49,6 +49,19 @@ No build step or server is required! Simply open the project folder and run:
 
 ---
 
+## 🔍 Troubleshooting (Local Domains & Firefox)
+
+If you are running the application on a local server domain (e.g., `http://ai-account.test/` using Laragon/Herd/Apache) and encounter rendering or loading issues in Firefox, try these steps:
+
+1. **Clear Browser Cache (Hard Refresh)**: 
+   Firefox caching on local HTTP domains can be aggressive. Force download the updated CSS and JS files by pressing **`Ctrl + F5`** (or **`Ctrl + Shift + R`**).
+2. **Disable Enhanced Tracking Protection**:
+   Firefox may block IndexedDB, local storage, or OPFS on unsecure custom HTTP domains. 
+   - Click the **Shield icon** 🛡️ on the left side of the address bar.
+   - Toggle off **"Enhanced Tracking Protection for this site"** and let the page reload.
+
+---
+
 ## 🌐 Browser Compatibility & UI Behavior
 
 Depending on the browser you use, you will see a slightly different interface for managing files due to browser-specific security sandbox limits:
@@ -78,3 +91,4 @@ The following changes and optimizations have been made in this update cycle:
 - **Offline Local Fonts**: Downloaded the Inter font family (weights 300 to 800) locally into the `fonts/` directory and declared them via `@font-face` in `style.css`. Removed all remote Google Fonts HTTP link tags from `index.html`, allowing the app to render styled text instantly even in full offline environments.
 - **Email Copy Option**: Added a copy icon to the right side of the account email address for quick one-click clipboard copying (automatically hidden during inline editing).
 - **"In Use" Lifecycle State**: Added a new "In Use" state for accounts. When an account is available, a Play (Start Using) icon is displayed in the actions bar. Clicking it marks the account as active ("In Use" with purple styling). Once finished using it, clicking the Clock (Set Cooldown) icon opens the timer dialog to transition the account into a cooldown, optimizing usage workflows. Includes full support for stats counters and filter pills.
+- **Troubleshooting Documentation**: Added a dedicated troubleshooting guide to the README.md detailing how to perform a Hard Refresh and handle Firefox's Enhanced Tracking Protection blocks on local unsecure HTTP domains.
