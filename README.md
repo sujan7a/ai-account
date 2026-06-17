@@ -32,10 +32,11 @@ To ensure data isn't lost when the browser window closes while maintaining stand
 
 ## 🛠️ File Structure
 
-The project consists of three core, vanilla web assets:
+The project consists of three core, vanilla web assets and local assets:
 - `index.html` — The structural layout and template markup.
 - `style.css` — The responsive styling, custom typography, animations, variables, and color schemes.
 - `app.js` — Core application logic, event listeners, timer ticks, and multi-layer storage integrations.
+- `fonts/` — Contains locally downloaded Inter font files (`.ttf`, weights 300 to 800) for complete offline support.
 
 ---
 
@@ -74,6 +75,6 @@ The following changes and optimizations have been made in this update cycle:
   - In **Dark Mode**, the availability status text is styled in crisp white (`#ffffff`) for sharp readability against the dark background.
   - In **Light Mode**, the text uses a darker gray (`var(--text-secondary)`) to maintain clean contrast.
 - **Firefox Startup Delay Fix**: Implemented a **500ms timeout** on the IndexedDB initialization check in `app.js`. If Firefox blocks or hangs on local IndexedDB access (a known issue when running from local protocols like `file:///`), the app will bypass it and fall back to LocalStorage instantly, avoiding a frozen blank screen.
-- **Asynchronous Fonts**: Configured Google Fonts loading in `index.html` to be completely non-blocking, ensuring the app layout loads instantly using system fonts first.
+- **Offline Local Fonts**: Downloaded the Inter font family (weights 300 to 800) locally into the `fonts/` directory and declared them via `@font-face` in `style.css`. Removed all remote Google Fonts HTTP link tags from `index.html`, allowing the app to render styled text instantly even in full offline environments.
 - **Email Copy Option**: Added a copy icon to the right side of the account email address for quick one-click clipboard copying (automatically hidden during inline editing).
 - **"In Use" Lifecycle State**: Added a new "In Use" state for accounts. When an account is available, a Play (Start Using) icon is displayed in the actions bar. Clicking it marks the account as active ("In Use" with purple styling). Once finished using it, clicking the Clock (Set Cooldown) icon opens the timer dialog to transition the account into a cooldown, optimizing usage workflows. Includes full support for stats counters and filter pills.
