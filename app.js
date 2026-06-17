@@ -43,6 +43,7 @@
   const filterBtns       = document.querySelectorAll('.pill[data-filter]');
   const statTotal        = document.querySelector('#stat-total .stat-value');
   const statReady        = document.querySelector('#stat-ready .stat-value');
+  const statInUse        = document.querySelector('#stat-in-use .stat-value');
   const statCooling      = document.querySelector('#stat-cooling .stat-value');
 
   // ============================================================
@@ -359,6 +360,7 @@
     return name.split(/\s+/).map(w => w[0]).join('').toUpperCase().slice(0, 2);
   }
   function getAccountState(acc) {
+    if (acc.inUse) return 'in-use';
     if (!acc.availableAt) return 'idle';
     return Date.now() >= acc.availableAt ? 'ready' : 'cooling';
   }
@@ -387,15 +389,26 @@
   // ============================================================
   // Rendering
   // ============================================================
-  function buildCountdownHTML(parts, state, availableAt) {
+  function buildCountdownHTML(parts, state, availableAt, id) {
+    if (state === 'in-use') {
+      return `
+        <div class="account-countdown">
+          <span class="countdown-badge in-use"><span class="status-dot"></span>In Use</span>
+          <div class="countdown-digits">
+            <span class="in-use-big">⚡ Active Session</span>
+          </div>
+          <div class="ready-at-text">Currently in use. Click ⏱ when finished.</div>
+        </div>`;
+    }
     if (state === 'ready') {
+      const timeSubtext = availableAt ? `<div class="ready-at-text">Became available: ${formatDateTime(availableAt)}</div>` : '';
       return `
         <div class="account-countdown">
           <span class="countdown-badge ready"><span class="status-dot"></span>Ready to Use</span>
           <div class="countdown-digits">
             <span class="ready-big">✓ Available Now</span>
           </div>
-          <div class="ready-at-text">Became available: ${formatDateTime(availableAt)}</div>
+          ${timeSubtext}
         </div>`;
     }
     if (state === 'idle') {
@@ -433,12 +446,14 @@
     const filtered = accounts.filter(acc => {
       const s = getAccountState(acc);
       if (currentFilter === 'ready')   return s === 'ready';
+      if (currentFilter === 'in-use')  return s === 'in-use';
       if (currentFilter === 'cooling') return s === 'cooling';
       return true;
     });
 
     statTotal.textContent   = accounts.length;
     statReady.textContent   = accounts.filter(a => getAccountState(a) === 'ready').length;
+    statInUse.textContent   = accounts.filter(a => getAccountState(a) === 'in-use').length;
     statCooling.textContent = accounts.filter(a => getAccountState(a) === 'cooling').length;
 
     if (filtered.length === 0) {
@@ -455,7 +470,22 @@
     accountsList.innerHTML = filtered.map(acc => {
       const state = getAccountState(acc);
       const parts = acc.availableAt ? getTimeParts(acc.availableAt) : null;
-      const countdownHTML = buildCountdownHTML(parts, state, acc.availableAt);
+      const countdownHTML = buildCountdownHTML(parts, state, acc.availableAt, acc.id);
+      
+      const useBtn = state === 'ready' ? `
+        <button class="btn-icon play-btn" onclick="app.useAccount('${acc.id}')" title="Start using account">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+          </svg>
+        </button>` : '';
+
+      const setCooldownBtn = `
+        <button class="btn-icon" onclick="app.setCooldown('${acc.id}')" title="Set cooldown timer">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+          </svg>
+        </button>`;
+
       const clearBtn = state === 'cooling' ? `
         <button class="btn-icon" onclick="app.clearTimer('${acc.id}')" title="Clear timer">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -463,6 +493,7 @@
             <path d="M2.5 22v-6h6"/><path d="M21.5 12a10 10 0 0 1-17.37 6.63L2.5 16"/>
           </svg>
         </button>` : '';
+
       return `
         <div class="account-card ${state}" data-id="${acc.id}">
           <div class="account-card-top">
@@ -480,11 +511,8 @@
               </div>
             </div>
             <div class="account-actions">
-              <button class="btn-icon" onclick="app.setCooldown('${acc.id}')" title="Set cooldown timer">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
-                </svg>
-              </button>
+              ${useBtn}
+              ${setCooldownBtn}
               ${clearBtn}
               <button class="btn-icon" onclick="app.editAccount('${acc.id}')" title="Edit account">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -511,7 +539,7 @@
   function tick() {
     let needsRender = false;
     accounts.forEach(acc => {
-      if (acc.availableAt && Date.now() >= acc.availableAt) {
+      if (acc.availableAt && Date.now() >= acc.availableAt && !acc.inUse) {
         const el = document.querySelector(`.account-card[data-id="${acc.id}"]`);
         if (el && !el.classList.contains('ready')) {
           needsRender = true;
@@ -612,6 +640,7 @@
     const acc = accounts.find(a => a.id === cooldownTargetId);
     if (acc) {
       acc.availableAt = Date.now() + ms;
+      acc.inUse = false;
       saveAccounts();
       render();
       const label = [d && `${d}d`, h && `${h}h`, m && `${m}m`].filter(Boolean).join(' ');
@@ -630,9 +659,20 @@
       const acc = accounts.find(a => a.id === id);
       if (!acc) return;
       acc.availableAt = null;
+      acc.inUse = false;
       saveAccounts();
       render();
       showToast(`Timer cleared for ${acc.name}`, 'info');
+    },
+
+    useAccount(id) {
+      const acc = accounts.find(a => a.id === id);
+      if (acc) {
+        acc.inUse = true;
+        saveAccounts();
+        render();
+        showToast(`${acc.name} is now in use`, 'success');
+      }
     },
 
     editAccount(id) {

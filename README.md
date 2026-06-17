@@ -8,12 +8,13 @@ A clean, modern, single-page web application to track multiple AI sub-accounts (
 
 - **Multi-Account Monitoring**: Track unlimited accounts, displaying names and email addresses.
 - **Visual Cooldown States**: Clear visual cues for status changes:
-  - `Ready to Use` (Green badge and checkmarks)
+  - `Ready to Use` (Green badge and checkmarks with a "Start Using" trigger)
+  - `In Use` (Purple badge and "Active Session" status, indicating the account is currently active)
   - `Cooling Down` (Red badge with a live ticking countdown and expected ready time)
   - `No Timer Set` (Gray state ready to receive a timer)
 - **Flexible Timers & Presets**: Set custom timers in Days, Hours, and Minutes, or use quick presets (e.g., `1h`, `2h`, `4h`, `4h 30m`, `5h`, `8h`, `1d`, `2d`, `3d`).
 - **Inline Editing**: Double-click or click the edit icon to rename accounts or update emails directly.
-- **Smart Filtering**: Quickly filter accounts by their status: *All*, *Ready*, or *Cooling Down*.
+- **Smart Filtering**: Quickly filter accounts by their status: *All*, *Ready*, *In Use*, or *Cooling Down*.
 - **Aesthetic UI**: Smooth, dark-mode-first modern look with glassmorphic elements, vibrant glow gradients, micro-animations, and a manual light/dark mode theme selector.
 - **System Notification Toasts**: Real-time alerts when a cooldown finishes or actions are performed.
 
@@ -75,3 +76,4 @@ The following changes and optimizations have been made in this update cycle:
 - **Firefox Startup Delay Fix**: Implemented a **500ms timeout** on the IndexedDB initialization check in `app.js`. If Firefox blocks or hangs on local IndexedDB access (a known issue when running from local protocols like `file:///`), the app will bypass it and fall back to LocalStorage instantly, avoiding a frozen blank screen.
 - **Asynchronous Fonts**: Configured Google Fonts loading in `index.html` to be completely non-blocking, ensuring the app layout loads instantly using system fonts first.
 - **Email Copy Option**: Added a copy icon to the right side of the account email address for quick one-click clipboard copying (automatically hidden during inline editing).
+- **"In Use" Lifecycle State**: Added a new "In Use" state for accounts. When an account is available, a Play (Start Using) icon is displayed in the actions bar. Clicking it marks the account as active ("In Use" with purple styling). Once finished using it, clicking the Clock (Set Cooldown) icon opens the timer dialog to transition the account into a cooldown, optimizing usage workflows. Includes full support for stats counters and filter pills.

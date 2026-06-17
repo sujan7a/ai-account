@@ -226,10 +226,10 @@ body {
   backdrop-filter: blur(16px);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
-  padding: 10px 16px;
+  padding: 6px 12px;
   text-align: center;
-  min-width: 66px;
-  height: 58px;
+  min-width: 58px;
+  height: 50px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -240,12 +240,21 @@ body {
 }
 .stat:hover { border-color: var(--border-accent); transform: translateY(-1px); }
 
-.stat-value { display: block; font-size: 1.35rem; font-weight: 700; color: var(--text-primary); }
+.stat-value {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  height: 20px;
+  line-height: 1;
+}
 .stat-ready .stat-value { color: var(--accent-green); }
 .stat-cooling .stat-value { color: var(--accent-amber); }
 .stat-label {
-  display: block; font-size: 0.63rem; color: var(--text-muted);
-  text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; margin-top: 2px;
+  display: block; font-size: 0.58rem; color: var(--text-muted);
+  text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; margin-top: 1px;
 }
 
 /* ===== Header Status Action Buttons ===== */
@@ -261,16 +270,12 @@ body {
   transform: translateY(-1px);
 }
 .stat-btn .stat-value {
-  font-size: 1.15rem;
+  font-size: 1.05rem;
   font-weight: normal;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 24px;
 }
 .stat-btn .stat-value svg {
-  width: 20px;
-  height: 20px;
+  width: 17px;
+  height: 17px;
   display: block;
 }
 
@@ -394,6 +399,8 @@ html.light .stat-btn .theme-icon-dark { display: none; }
 }
 .btn-icon:hover { border-color: var(--border-accent); color: var(--text-primary); background: rgba(128,128,255,0.05); }
 .btn-icon.danger:hover { border-color: var(--accent-red); color: var(--accent-red); background: var(--accent-red-soft); }
+.btn-icon.play-btn { color: var(--accent-purple); border-color: rgba(167, 139, 250, 0.22); }
+.btn-icon.play-btn:hover { border-color: var(--accent-purple); color: var(--accent-purple); background: rgba(167, 139, 250, 0.1); }
 .btn-icon svg { width: 16px; height: 16px; }
 
 /* ===== Accounts Section ===== */
@@ -464,6 +471,11 @@ html.light .stat-btn .theme-icon-dark { display: none; }
 .account-card.ready { border-color: rgba(52,211,153,0.25); box-shadow: var(--shadow-glow-green); }
 .account-card.ready::before { background: var(--gradient-ready); width: 5px; }
 .account-card.ready:hover { border-color: rgba(52,211,153,0.4); }
+.account-card.in-use { border-color: rgba(167, 139, 250, 0.25); box-shadow: 0 0 30px rgba(167, 139, 250, 0.12); }
+.account-card.in-use::before { background: var(--accent-purple); width: 5px; }
+.account-card.in-use:hover { border-color: rgba(167, 139, 250, 0.4); }
+.account-card.cooling { border-color: rgba(251, 191, 36, 0.22); box-shadow: 0 0 30px rgba(251, 191, 36, 0.08); }
+.account-card.cooling:hover { border-color: rgba(251, 191, 36, 0.35); }
 .account-card.idle::before { background: var(--accent-blue); }
 
 @keyframes fadeInUp {
@@ -551,6 +563,16 @@ html.light .stat-btn .theme-icon-dark { display: none; }
   border-color: rgba(52,211,153,0.3);
 }
 
+.account-card.in-use .account-countdown {
+  background: rgba(167, 139, 250, 0.08);
+  border-color: rgba(167, 139, 250, 0.3);
+}
+
+.account-card.cooling .account-countdown {
+  background: var(--accent-amber-soft);
+  border-color: rgba(251, 191, 36, 0.25);
+}
+
 .account-card.idle .account-countdown {
   background: var(--accent-blue-soft);
   border-color: rgba(108,140,255,0.2);
@@ -563,13 +585,15 @@ html.light .stat-btn .theme-icon-dark { display: none; }
   margin-bottom: 10px;
 }
 .countdown-badge.ready { color: var(--accent-green); }
+.countdown-badge.in-use { color: var(--accent-purple); }
 .countdown-badge.cooling { color: var(--accent-amber); }
 .countdown-badge.idle { color: var(--accent-blue); }
 
 .status-dot {
   width: 7px; height: 7px; border-radius: 50%; background: currentColor; flex-shrink: 0;
 }
-.countdown-badge.ready .status-dot { animation: dotPulse 1.5s ease-in-out infinite; }
+.countdown-badge.ready .status-dot,
+.countdown-badge.in-use .status-dot { animation: dotPulse 1.5s ease-in-out infinite; }
 
 @keyframes dotPulse {
   0%,100% { opacity: 1; transform: scale(1); }
@@ -616,6 +640,9 @@ html.light .stat-btn .theme-icon-dark { display: none; }
 .account-card.ready .countdown-num {
   color: var(--countdown-ready-color);
 }
+.account-card.cooling .countdown-num {
+  color: var(--accent-amber);
+}
 
 .digit-sep {
   font-size: 2.8rem;
@@ -652,6 +679,29 @@ html.light .ready-at-text {
   font-weight: 800;
   color: var(--accent-green);
   letter-spacing: -0.02em;
+}
+
+/* In Use big text */
+.in-use-big {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: var(--accent-purple);
+  letter-spacing: -0.02em;
+}
+
+.account-card.in-use .account-avatar {
+  background: rgba(167, 139, 250, 0.15);
+  color: var(--accent-purple);
+  border-color: rgba(167, 139, 250, 0.3);
+}
+.account-card.cooling .account-avatar {
+  background: var(--accent-amber-soft);
+  color: var(--accent-amber);
+  border-color: rgba(251, 191, 36, 0.25);
+}
+
+.stat-in-use .stat-value {
+  color: var(--accent-purple);
 }
 
 /* Account Actions */
