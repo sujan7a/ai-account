@@ -74,3 +74,4 @@ The following changes and optimizations have been made in this update cycle:
   - In **Light Mode**, the text uses a darker gray (`var(--text-secondary)`) to maintain clean contrast.
 - **Firefox Startup Delay Fix**: Implemented a **500ms timeout** on the IndexedDB initialization check in `app.js`. If Firefox blocks or hangs on local IndexedDB access (a known issue when running from local protocols like `file:///`), the app will bypass it and fall back to LocalStorage instantly, avoiding a frozen blank screen.
 - **Asynchronous Fonts**: Configured Google Fonts loading in `index.html` to be completely non-blocking, ensuring the app layout loads instantly using system fonts first.
+- **Email Copy Option**: Added a copy icon to the right side of the account email address for quick one-click clipboard copying (automatically hidden during inline editing).

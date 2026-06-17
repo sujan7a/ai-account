@@ -492,9 +492,43 @@ html.light .stat-btn .theme-icon-dark { display: none; }
   font-size: 1rem; font-weight: 700; color: var(--text-primary);
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
+.account-email-container {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 3px;
+  max-width: 100%;
+}
 .account-email {
   font-size: 0.78rem; color: var(--text-muted);
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 3px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.btn-copy-email {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 2px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: var(--transition);
+  opacity: 0.5;
+  flex-shrink: 0;
+}
+.btn-copy-email:hover {
+  color: var(--accent-blue);
+  background: var(--accent-blue-soft);
+  opacity: 1;
+}
+.btn-copy-email svg {
+  width: 11px;
+  height: 11px;
+  display: block;
+}
+.account-email-container:has(.inline-edit-input) .btn-copy-email {
+  display: none;
 }
 
 /* ===== BIG COUNTDOWN DISPLAY ===== */

@@ -469,7 +469,15 @@
             <div class="account-avatar">${getInitials(acc.name)}</div>
             <div class="account-info">
               <div class="account-name">${escapeHtml(acc.name)}</div>
-              <div class="account-email">${escapeHtml(acc.email)}</div>
+              <div class="account-email-container">
+                <span class="account-email">${escapeHtml(acc.email)}</span>
+                <button class="btn-copy-email" onclick="app.copyEmail(event, '${escapeHtml(acc.email)}')" title="Copy email">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                  </svg>
+                </button>
+              </div>
             </div>
             <div class="account-actions">
               <button class="btn-icon" onclick="app.setCooldown('${acc.id}')" title="Set cooldown timer">
@@ -694,6 +702,15 @@
       saveAccounts();
       render();
       showToast(`${acc.name} removed`, 'info');
+    },
+
+    copyEmail(event, email) {
+      event.stopPropagation();
+      navigator.clipboard.writeText(email).then(() => {
+        showToast('Email copied!', 'success');
+      }).catch(err => {
+        console.error('Could not copy text: ', err);
+      });
     }
   };
 
