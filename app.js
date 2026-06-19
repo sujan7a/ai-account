@@ -451,6 +451,36 @@
       return true;
     });
 
+    // Sort accounts by priority: In Use -> Ready -> Idle (No Timer Set) -> Cooling Down
+    filtered.sort((a, b) => {
+      const stateA = getAccountState(a);
+      const stateB = getAccountState(b);
+
+      const getPriority = (state) => {
+        if (state === 'in-use') return 1;
+        if (state === 'ready') return 2;
+        if (state === 'idle') return 3;
+        if (state === 'cooling') return 4;
+        return 5;
+      };
+
+      const pA = getPriority(stateA);
+      const pB = getPriority(stateB);
+
+      if (pA !== pB) {
+        return pA - pB;
+      }
+
+      // Within the same state group:
+      if (stateA === 'cooling') {
+        // Sort by availableAt ascending (closest to finishing cooldown first)
+        return (a.availableAt || 0) - (b.availableAt || 0);
+      }
+
+      // Default sorting by name alphabetically
+      return a.name.localeCompare(b.name);
+    });
+
     statTotal.textContent   = accounts.length;
     statReady.textContent   = accounts.filter(a => getAccountState(a) === 'ready').length;
     statInUse.textContent   = accounts.filter(a => getAccountState(a) === 'in-use').length;
